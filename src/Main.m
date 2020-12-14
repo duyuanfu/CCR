@@ -9,7 +9,7 @@ inputPath = '../image/ori_img/example2.jpg';
 % 原图像
 image1 = imread(inputPath);
 
-% 二值化
+% 二值化 
 binPath = Binaryzation(inputPath);
 
 % 消除噪音
