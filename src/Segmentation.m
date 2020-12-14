@@ -1,10 +1,11 @@
 % 对图像进行行切分和字切分
 % 输入：输入图片路径inputPath
 % 输出：输出图片的上一层路径outputPath, 分割行数rowCount， 风格列数colCount
-function [outputPath, rowCount, colCount] = Segmentation(inputPath)
+function [outputPath, rowCount, chineseCount] = Segmentation(inputPath)
 
 image1 = imread(inputPath);
 
+chineseCount = 0; % 用于计数图片中的汉字数量
 % 对图像像素值取反
 [M, N] = size(image1);
 image2 = zeros(M, N);
@@ -36,11 +37,10 @@ for i = 1 : M
         flag = 0;
     end
     if(flag == 0 && horizontal(i) == 0) % 行下方的起始坐标
-        rowCoord(rowCount,2) = i - 1; % + 4 为再汉字上方留空白
+        rowCoord(rowCount, 2) = i - 1; % + 4 为再汉字上方留空白
         flag = 1;
     end
 end
-
 
 outputPath = '../image/seg_img/';
 for i = 1 : rowCount
@@ -48,7 +48,7 @@ for i = 1 : rowCount
     for j = 1 : colCount
         image3 = image2(rowCoord(i, 1):rowCoord(i, 2),colCoord(j, 1):colCoord(j,2));
         image4 = logical(image3);
-        imwrite(image4, [outputPath, num2str(colCount * (i - 1) + j, '%d'), '.bmp']);
+        chineseCount = chineseCount + 1;
+        imwrite(image4, [outputPath, num2str(chineseCount, '%d'), '.bmp']);
     end
 end
-num = rowCount * colCount;   

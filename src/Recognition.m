@@ -1,7 +1,7 @@
 % 找到字库里匹配的字号
-% 输入：输入图片路径inputinputPath
+% 输入：输入图片路径inputPath
 % 输出：识别图像结果resultImage
-function resultImage = ChineseRecognition(inputPath)
+function resultImage = Recognition(inputPath)
 chineseNum = 2822;
 load('../data/matlab.mat');
 
