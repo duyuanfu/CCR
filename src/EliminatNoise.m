@@ -19,5 +19,10 @@ for i = 2 : M - 1
     end
 end
 image3 = logical(image2);
-outputPath = '../image/eli_img/example1.bmp';
+
+folder='../image/eli_img/';
+if ~exist(folder,'dir')
+	mkdir(folder)
+end
+outputPath = [folder, '1.bmp'];
 imwrite(image3, outputPath);

@@ -56,5 +56,10 @@ for i = 1 : M
     end
 end
 image4 = logical(image3);
-outputPath = '../image/bin_img/example1.bmp';
+
+folder='../image/bin_img/';
+if ~exist(folder,'dir')
+	mkdir(folder)
+end
+outputPath = [folder, '1.bmp'];
 imwrite(image4, outputPath);

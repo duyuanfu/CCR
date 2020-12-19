@@ -42,7 +42,11 @@ for i = 1 : M
     end
 end
 
-outputPath = '../image/seg_img/';
+folder='../image/seg_img/';
+if ~exist(folder,'dir')
+	mkdir(folder)
+end
+outputPath = folder;
 for i = 1 : rowCount
     [colCount, colCoord] = SegChinese(image2(rowCoord(i, 1) : rowCoord(i, 2), :));
     for j = 1 : colCount

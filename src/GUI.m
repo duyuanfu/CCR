@@ -155,12 +155,17 @@ imagePath = get(handles.text1,'String');
 chineseCount = 14;
 
 % 将结果写入文件
-imagePath1 = '../image/res_img/';
+folder='../image/res_img/';
+if ~exist(folder,'dir')
+	mkdir(folder)
+end
+outputPath = [folder, '1.bmp'];
+
 for i = 1 : chineseCount
     resultImage  = logical(Recognition([imagePath, num2str(i), '.bmp']));
-    imwrite(resultImage, [imagePath1, num2str(i), '.bmp']);
+    imwrite(resultImage, [folder, num2str(i), '.bmp']);
 end
-set(handles.text1, 'String', imagePath1); 
+set(handles.text1, 'String', folder); 
 
 % 初始化axes背景
 imageBack = uint8(255 * ones(300, 500));
@@ -173,8 +178,7 @@ hold on
 for i = 1 : 10
     for j = 1 : 6
         if (10 * (j - 1) + i)  <= chineseCount       
-            image = imread([imagePath1, num2str(10 * (j - 1) + i), '.bmp']);
-%             image = imageNull1;
+            image = imread([folder, num2str(10 * (j - 1) + i), '.bmp']);
         else
             image = imageNull;
         end
