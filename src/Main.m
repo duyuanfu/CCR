@@ -1,10 +1,10 @@
 % 汉字识别系统
 clear;
 clc;
-disp('汉字识别系统');
+disp('Chinese Character Identification System');
 
 % 输入图像地址（相对路径）
-inputPath = '../image/ori_img/example2.jpg';
+inputPath = '../image/ori_img/example1.jpg';
 
 % 原图像
 image1 = imread(inputPath);
@@ -21,7 +21,7 @@ eliPath = EliminatNoise(binPath);
 % 汉字识别
 for i = 1 : chineseCount
         segPath1 = strcat(segPath, num2str(i), '.bmp');
-        resultImage = Recognition(segPath1);
+        [resultImage, resultChar] = Recognition(segPath1);
         
         subplot(rowCount, ceil(chineseCount / rowCount), i);
         imshow(resultImage);

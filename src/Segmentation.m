@@ -44,7 +44,7 @@ end
 
 folder='../image/seg_img/';
 if ~exist(folder,'dir')
-	mkdir(folder)
+	mkdir(folder);
 end
 outputPath = folder;
 for i = 1 : rowCount

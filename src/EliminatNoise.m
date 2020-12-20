@@ -22,7 +22,7 @@ image3 = logical(image2);
 
 folder='../image/eli_img/';
 if ~exist(folder,'dir')
-	mkdir(folder)
+	mkdir(folder);
 end
 outputPath = [folder, '1.bmp'];
 imwrite(image3, outputPath);

@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help CCR_GUI
 
-% Last Modified by GUIDE v2.5 19-Dec-2020 20:05:52
+% Last Modified by GUIDE v2.5 20-Dec-2020 22:23:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,7 +60,18 @@ guidata(hObject, handles);
 
 % UIWAIT makes CCR_GUI wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
+global chineseCount; % ï¿½Ö¸îººï¿½ï¿½ï¿½ï¿½ï¿?
+chineseCount = 0;
+global inputPath; % ï¿½ï¿½ï¿½Æ¬ï¿½Äµï¿½ï¿½
+inputPath = '';
+global binPath; % ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Äµï¿½ï¿½
+binPath = '';
+global eliPath; % ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Äµï¿½ï¿½
+eliPath = '';
+global segPath; % ï¿½Ö¸ï¿½ï¿½Æ¬ï¿½Äµï¿½ï¿½
+segPath = '';
+global resPath; % ï¿½ï¿½Í¼Æ¬ï¿½Äµï¿½ï¿?
+resPath = '';
 
 % --- Outputs from this function are returned to the command line.
 function varargout = CCR_GUI_OutputFcn(hObject, eventdata, handles) 
@@ -78,10 +89,11 @@ function pushbutton_open_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_open (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[filename pathname] = uigetfile({'*.jpg; *.bmp'}, '´ò¿ªÍ¼Æ¬', '..\image\ori_img');
-imagePath = [pathname filename];
-set(handles.text1, 'String', imagePath);
-image = imread(imagePath);
+[filename, pathname] = uigetfile({'*.jpg; *.bmp'}, 'ï¿½ï¿½ï¿½Æ?', '..\image\ori_img');
+global inputPath;
+inputPath = [pathname, filename];
+set(handles.edit1, 'String', inputPath);
+image = imread(inputPath);
 axes(handles.axes1);
 imshow(image);
 guidata(hObject, handles);
@@ -92,10 +104,13 @@ function pushbutton_bin_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_bin (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-imagePath = get(handles.text1,'String');
-imagePath = Binaryzation(imagePath);
-set(handles.text1, 'String', imagePath);
-image = imread(imagePath);
+imagePath = get(handles.edit1,'String');
+global inputPath;
+global binPath;
+
+binPath = Binaryzation(inputPath);
+set(handles.edit1, 'String', binPath);
+image = imread(binPath);
 axes(handles.axes1);
 imshow(image);
 
@@ -105,10 +120,12 @@ function pushbutton_elm_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_elm (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-imagePath = get(handles.text1,'String');
-imagePath = EliminatNoise(imagePath);
-set(handles.text1, 'String', imagePath);
-image = imread(imagePath);
+imagePath = get(handles.edit1,'String');
+global binPath;
+global eliPath;
+eliPath = EliminatNoise(binPath);
+set(handles.edit1, 'String', eliPath);
+image = imread(eliPath);
 axes(handles.axes1);
 imshow(image);
 
@@ -118,32 +135,45 @@ function pushbutton_seg_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_seg (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-imagePath = get(handles.text1,'String');
+imagePath = get(handles.edit1,'String');
+global chineseCount;
+global eliPath;
+global segPath;
+[segPath, rowCount, chineseCount] = Segmentation(eliPath);
+set(handles.edit1, 'String', segPath);
+pageNum = ceil(chineseCount / 60);
+set(handles.slider,'Min', 0, 'Max', pageNum, 'Value', pageNum);
+draw(segPath, chineseCount, handles, 1);
 
-[imagePath, rowCount, chineseCount]= Segmentation(imagePath);
-set(handles.text1, 'String', imagePath);
+
+function draw(imagePath, chineseCount, handles, pageNum)
 imageNull = logical(1 * ones(48, 48));
-imageBack = uint8(255 * ones(300, 500));
-imshow(imageBack);
+imageBack = logical(1 * ones(300, 500));
 
 axes(handles.axes1);
+% ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+imshow(imageBack);
+
 hold on
+
 for i = 1 : 10
     for j = 1 : 6
-        if (10 * (j - 1) + i)  <= chineseCount       
-            image = imread([imagePath, num2str(10 * (j - 1) + i), '.bmp']);
-%             image = imageNull1;
+        if (10 * (j - 1) + i + (pageNum - 1) * 60)  <= chineseCount       
+            image = imread([imagePath, num2str(10 * (j - 1) + i + (pageNum - 1) * 60), '.bmp']);
         else
             image = imageNull;
         end
         imshow(image, 'Parent', handles.axes1,...
-            'XData',[1 + 50 * (i - 1), 50 * i - 1],...
-            'YData',[1 + 50 * (j - 1), 50 * j - 1]);
+            'XData',[5 + 50 * (i - 1), 50 * i - 5],...
+            'YData',[5 + 50 * (j - 1), 50 * j - 5]);     
     end
 end
+
 hold off
 handles.axes1.XLim = [0, 500];
 handles.axes1.YLim = [0, 300];
+
+
 
 
 % --- Executes on button press in pushbutton_reg.
@@ -151,45 +181,27 @@ function pushbutton_reg_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_reg (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-imagePath = get(handles.text1,'String');
-chineseCount = 14;
+imagePath = get(handles.edit1,'String');
 
-% ½«½á¹ûÐ´ÈëÎÄ¼þ
-folder='../image/res_img/';
-if ~exist(folder,'dir')
-	mkdir(folder)
+global chineseCount;
+global segPath;
+global resPath;
+% ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
+resPath='../image/res_img/';
+if ~exist(resPath, 'dir')
+	mkdir(resPath);
 end
-outputPath = [folder, '1.bmp'];
 
+str ='';
 for i = 1 : chineseCount
-    resultImage  = logical(Recognition([imagePath, num2str(i), '.bmp']));
-    imwrite(resultImage, [folder, num2str(i), '.bmp']);
+    [resultImage, resultChar] = Recognition([segPath, num2str(i), '.bmp']);
+    resultImage  = logical(resultImage);
+    imwrite(resultImage, [resPath, num2str(i), '.bmp']);
+    set(handles.edit4, 'String', [str, resultChar]); 
+    str = get(handles.edit4, 'String'); 
 end
-set(handles.text1, 'String', folder); 
-
-% ³õÊ¼»¯axes±³¾°
-imageBack = uint8(255 * ones(300, 500));
-imshow(imageBack);
-
-imageNull = logical(1 * ones(48, 48));
-% »æÍ¼
-axes(handles.axes1);
-hold on
-for i = 1 : 10
-    for j = 1 : 6
-        if (10 * (j - 1) + i)  <= chineseCount       
-            image = imread([folder, num2str(10 * (j - 1) + i), '.bmp']);
-        else
-            image = imageNull;
-        end
-        imshow(image, 'Parent', handles.axes1,...
-            'XData',[1 + 50 * (i - 1), 50 * i - 1],...
-            'YData',[1 + 50 * (j - 1), 50 * j - 1]);
-    end
-end
-hold off
-handles.axes1.XLim = [0, 500];
-handles.axes1.YLim = [0, 300];
+set(handles.edit1, 'String', resPath); 
+draw(resPath, chineseCount, handles, 1);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -197,10 +209,129 @@ function axes1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to axes1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
-set(gca,'XColor',get(gca,'Color')) ;% ÕâÁ½ÐÐ´úÂë¹¦ÄÜ£º½«×ø±êÖáºÍ×ø±ê¿Ì¶È×ªÎª°×É«
+set(gca,'XColor',get(gca,'Color')) ;% ï¿½ï¿½ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½
 set(gca,'YColor',get(gca,'Color'));
  
-set(gca,'XTickLabel',[]); % ÕâÁ½ÐÐ´úÂë¹¦ÄÜ£ºÈ¥³ý×ø±ê¿Ì¶È
-set(gca,'YTickLabel',[]);
+set(gca,'XTickLabel',[]); % ï¿½ï¿½ï¿½ï¿½ï¿½ë¹¦ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½set(gca,'YTickLabel',[]);
 
 % Hint: place code in OpeningFcn to populate axes1
+
+
+% --- Executes on slider movement.
+function slider_Callback(hObject, eventdata, handles)
+% hObject    handle to slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+val = get(hObject, 'value'); %Í¨ï¿½ï¿½etï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Ç°Öµ
+val = floor(val);
+val = get(hObject, 'Max') - val;
+global chineseCount;
+imagePath = get(handles.edit1,'String');
+draw(imagePath, chineseCount, handles, val);
+
+
+% --- Executes during object creation, after setting all properties.
+function slider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function edit1_Callback(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit1 as text
+%        str2double(get(hObject,'String')) returns contents of edit1 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit3_Callback(hObject, eventdata, handles)
+% hObject    handle to edit3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit3 as text
+%        str2double(get(hObject,'String')) returns contents of edit3 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit4_Callback(hObject, eventdata, handles)
+% hObject    handle to edit4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit4 as text
+%        str2double(get(hObject,'String')) returns contents of edit4 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit4_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

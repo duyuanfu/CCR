@@ -1,8 +1,8 @@
 % 找到字库里匹配的字号
 % 输入：输入图片路径inputPath
 % 输出：识别图像结果resultImage
-function resultImage = Recognition(inputPath)
-chineseNum = 2822;
+function [resultImage, resultChar] = Recognition(inputPath)
+chineseNum = 2820;
 load('../data/matlab.mat');
 
 L_index = ones(1, 20);% 汉字近邻候选值
@@ -101,6 +101,10 @@ end
 resultIndex = L_index(1);  % 找到最小值,记录最相似的汉字所在的位置
 resultDist = L_e(1); % 记录最相似的汉字的相似度
 
+fid = fopen('../data/chineseLib.txt', 'r', 'n', 'UTF-8');
+A = fscanf(fid, '%s', Inf);
+resultChar = A(resultIndex);
+fclose(fid);
 
 str = num2str(resultIndex);
 location = strcat('../image/lib_img/',str,'.bmp');

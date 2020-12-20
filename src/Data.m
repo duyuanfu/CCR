@@ -2,7 +2,7 @@
 clc;
 clear;
 
-chineseNum = 2822; % 汉字数量
+chineseNum = 2820; % 汉字数量
 for i = 1 : chineseNum
     str = num2str(i);
     readPath = strcat('../image/lib_img/',str,'.bmp');
@@ -12,7 +12,7 @@ for i = 1 : chineseNum
     
     folder='../image/cut_img/';
     if ~exist(folder,'dir')
-        mkdir(folder)
+        mkdir(folder);
     end
     writePath = [folder, str, '.bmp'];
     imwrite(image3, writePath);

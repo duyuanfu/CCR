@@ -59,7 +59,7 @@ image4 = logical(image3);
 
 folder='../image/bin_img/';
 if ~exist(folder,'dir')
-	mkdir(folder)
+	mkdir(folder);
 end
 outputPath = [folder, '1.bmp'];
 imwrite(image4, outputPath);
