@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help CCR_GUI
 
-% Last Modified by GUIDE v2.5 25-Dec-2020 15:35:13
+% Last Modified by GUIDE v2.5 25-Dec-2020 16:26:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -72,6 +72,10 @@ global segPath; % 图片分割后图片组保存路径（不包含文件名）
 segPath = '';
 global resPath; % 结果图片组保存路径（不包含文件名）
 resPath = '';
+global libPath;
+libPath = '';
+global feaPath;
+feaPath = '';
 
 % --- Outputs from this function are returned to the command line.
 function varargout = CCR_GUI_OutputFcn(hObject, eventdata, handles) 
@@ -202,6 +206,19 @@ for i = 1 : chineseCount
 end
 set(handles.edit1, 'String', resPath); 
 draw(resPath, chineseCount, handles, 1);
+
+
+% --- Executes on button press in pushbutton_fea.
+function pushbutton_fea_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_fea (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global libPath;
+global feaPath;
+[filename, pathname] = uigetfile({'*.jpg; *.bmp'}, '打开图片', '..\image\lib_img');
+libPath = pathname;
+feaPath = Data(libPath);
+set(handles.edit1, 'String', feaPath);
 
 
 
@@ -336,3 +353,5 @@ function edit4_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+

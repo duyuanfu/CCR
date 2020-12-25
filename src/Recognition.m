@@ -3,7 +3,12 @@
 % 输出：识别图像结果resultImage
 function [resultImage, resultChar] = Recognition(inputPath)
 chineseNum = 3018;
-load('../data/features.mat');
+
+saveVarsMat = load('../data/features.mat');
+InitChineseCrude = saveVarsMat.InitChineseCrude; % <3018x128 double> 元素太多
+clear saveVarsMat;
+% InitChineseCrude = csvread('../data/feature.csv', 1, 0);
+
 L_index = ones(1, 20);% 汉字近邻候选值
 L_e = ones(1, 20);
 Lm_index = ones(1, 10);
@@ -108,9 +113,4 @@ fclose(fid);
 str = num2str(resultIndex);
 location = strcat('../image/lib_img/',str,'.bmp');
 resultImage = imread(location);
-
-function?z?=?myFun ????
-    load?myData.mat ????
-    z?=?theta(1); 
-end
    
