@@ -13,16 +13,20 @@ end
 colCount = 0;%记录汉字的列数
 % colCoord; %汉字行数的上下坐标
 flag = 1;
-for i = 1 : M
-    if(flag == 1 && vertical(i) > 0)%行上方的起始坐标
+for i = 1 : N
+    if(flag == 1 && vertical(i) > 0) % 字左边的起始坐标
         colCount = colCount + 1;
-        colCoord(colCount,1) = i; % - 0 为再汉字上方留空白
+        colCoord(colCount,1) = i; % 0 为再汉字左边留空白
         flag = 0;
     end
 end
-for i = M : -1 : 1
-    if(flag == 0 && vertical(i) > 0)%行上方的起始坐标
-        colCoord(colCount,2) = i; % - 0 为再汉字上方留空白
+for i = N : -1 : 1
+    if(flag == 0 && vertical(i) > 0)% 字右边的起始坐标
+        if i - colCoord(colCount,1)  < uint8(0.7 * N)
+            colCoord(colCount,2) = colCoord(colCount,1) + uint8(0.7 * N);
+        else
+            colCoord(colCount,2) = i; % 0 为再汉字右边留空白
+        end
         flag = 1;
     end
 end

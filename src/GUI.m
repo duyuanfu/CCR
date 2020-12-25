@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help CCR_GUI
 
-% Last Modified by GUIDE v2.5 20-Dec-2020 22:23:34
+% Last Modified by GUIDE v2.5 25-Dec-2020 15:35:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,17 +60,17 @@ guidata(hObject, handles);
 
 % UIWAIT makes CCR_GUI wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-global chineseCount; % ï¿½Ö¸îººï¿½ï¿½ï¿½ï¿½ï¿?
+global chineseCount; % Ê¶±ðºº×ÖÊýÁ¿
 chineseCount = 0;
-global inputPath; % ï¿½ï¿½ï¿½Æ¬ï¿½Äµï¿½ï¿½
+global inputPath; % ÊäÈë´ýÊ¶±ðÍ¼ÏñÂ·¾¶£¨°üº¬ÎÄ¼þÃû£©
 inputPath = '';
-global binPath; % ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Äµï¿½ï¿½
+global binPath; % ¶þÖµ»¯ºóÍ¼Æ¬±£´æÂ·¾¶£¨°üº¬ÎÄ¼þÃû£©
 binPath = '';
-global eliPath; % ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Äµï¿½ï¿½
+global eliPath; % ÏûÔëºóÍ¼Æ¬±£´æÂ·¾¶£¨°üº¬ÎÄ¼þÃû£©
 eliPath = '';
-global segPath; % ï¿½Ö¸ï¿½ï¿½Æ¬ï¿½Äµï¿½ï¿½
+global segPath; % Í¼Æ¬·Ö¸îºóÍ¼Æ¬×é±£´æÂ·¾¶£¨²»°üº¬ÎÄ¼þÃû£©
 segPath = '';
-global resPath; % ï¿½ï¿½Í¼Æ¬ï¿½Äµï¿½ï¿?
+global resPath; % ½á¹ûÍ¼Æ¬×é±£´æÂ·¾¶£¨²»°üº¬ÎÄ¼þÃû£©
 resPath = '';
 
 % --- Outputs from this function are returned to the command line.
@@ -89,7 +89,7 @@ function pushbutton_open_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_open (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[filename, pathname] = uigetfile({'*.jpg; *.bmp'}, 'ï¿½ï¿½ï¿½Æ?', '..\image\ori_img');
+[filename, pathname] = uigetfile({'*.jpg; *.bmp'}, '´ò¿ªÍ¼Æ¬', '..\image\ori_img');
 global inputPath;
 inputPath = [pathname, filename];
 set(handles.edit1, 'String', inputPath);
@@ -151,7 +151,7 @@ imageNull = logical(1 * ones(48, 48));
 imageBack = logical(1 * ones(300, 500));
 
 axes(handles.axes1);
-% ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+% ±³¾°³õÊ¼»¯
 imshow(imageBack);
 
 hold on
@@ -186,14 +186,14 @@ imagePath = get(handles.edit1,'String');
 global chineseCount;
 global segPath;
 global resPath;
-% ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
+% ±£´æÊ¶±ð½á¹ûÍ¼Æ¬×é
 resPath='../image/res_img/';
 if ~exist(resPath, 'dir')
 	mkdir(resPath);
 end
 
 str ='';
-for i = 1 : chineseCount
+for i = 1 : chineseCount 
     [resultImage, resultChar] = Recognition([segPath, num2str(i), '.bmp']);
     resultImage  = logical(resultImage);
     imwrite(resultImage, [resPath, num2str(i), '.bmp']);
@@ -202,6 +202,7 @@ for i = 1 : chineseCount
 end
 set(handles.edit1, 'String', resPath); 
 draw(resPath, chineseCount, handles, 1);
+
 
 
 % --- Executes during object creation, after setting all properties.

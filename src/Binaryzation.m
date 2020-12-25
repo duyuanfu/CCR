@@ -9,17 +9,17 @@ image1 = imread(inputPath);
 % 灰度化
 image2 = rgb2gray(image1);
 
-% 滤波处理
-I = image2;
-MaskLog = fspecial('log');
-KB = filter2(MaskLog, I);  % 用于创建
-image2 = uint8(double(I) - KB);
+% % 滤波处理
+% I = image2;
+% MaskLog = fspecial('log');
+% KB = filter2(MaskLog, I);  % 用于创建
+% image2 = uint8(double(I) - KB);
 
 
 % 求取平均灰度值averGrayValue，获得阈值T1
 [M, N] = size(image2); % 求取图像尺寸,M-行，N-列
 minGrayValue = min(min(image2)); % 求最小灰度均值
-expValue = 0; % 经验值
+expValue = 220; % 经验值 图像比较干净时：0—220；图像噪声比较多：50 -150
 T1 = minGrayValue + expValue;
 
 % 通过阈值T1，求取低于或高于平均灰度值的两组平均灰度值

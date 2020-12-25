@@ -2,9 +2,8 @@
 % 输入：输入图片路径inputPath
 % 输出：识别图像结果resultImage
 function [resultImage, resultChar] = Recognition(inputPath)
-chineseNum = 2820;
-load('../data/matlab.mat');
-
+chineseNum = 3018;
+load('../data/features.mat');
 L_index = ones(1, 20);% 汉字近邻候选值
 L_e = ones(1, 20);
 Lm_index = ones(1, 10);
@@ -109,4 +108,9 @@ fclose(fid);
 str = num2str(resultIndex);
 location = strcat('../image/lib_img/',str,'.bmp');
 resultImage = imread(location);
+
+function?z?=?myFun ????
+    load?myData.mat ????
+    z?=?theta(1); 
+end
    
