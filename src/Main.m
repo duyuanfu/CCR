@@ -4,7 +4,7 @@ clc;
 disp('Chinese Character Identification System');
 
 % 输入图像地址（相对路径）
-inputPath = '../image/ori_img/example1.jpg';
+inputPath = '../image/ori_img/example2.jpg';
 
 % 原图像
 image1 = imread(inputPath);

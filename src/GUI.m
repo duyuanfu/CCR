@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help CCR_GUI
 
-% Last Modified by GUIDE v2.5 25-Dec-2020 16:26:01
+% Last Modified by GUIDE v2.5 26-Dec-2020 16:58:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -145,25 +145,24 @@ global eliPath;
 global segPath;
 [segPath, rowCount, chineseCount] = Segmentation(eliPath);
 set(handles.edit1, 'String', segPath);
-pageNum = ceil(chineseCount / 60);
+pageNum = ceil(chineseCount / 200);
 set(handles.slider,'Min', 0, 'Max', pageNum, 'Value', pageNum);
 draw(segPath, chineseCount, handles, 1);
 
 
 function draw(imagePath, chineseCount, handles, pageNum)
-imageNull = logical(1 * ones(48, 48));
-imageBack = logical(1 * ones(300, 500));
+imageNull = logical(1 * ones(40, 40));
+imageBack = logical(1 * ones(500, 1000));
 
 axes(handles.axes1);
 % 背景初始化
 imshow(imageBack);
 
 hold on
-
-for i = 1 : 10
-    for j = 1 : 6
-        if (10 * (j - 1) + i + (pageNum - 1) * 60)  <= chineseCount       
-            image = imread([imagePath, num2str(10 * (j - 1) + i + (pageNum - 1) * 60), '.bmp']);
+for i = 1 : 20
+    for j = 1 : 10
+        if (20 * (j - 1) + i + (pageNum - 1) * 200)  <= chineseCount       
+            image = imread([imagePath, num2str(20 * (j - 1) + i + (pageNum - 1) * 200), '.bmp']);
         else
             image = imageNull;
         end
@@ -172,10 +171,9 @@ for i = 1 : 10
             'YData',[5 + 50 * (j - 1), 50 * j - 5]);     
     end
 end
-
 hold off
-handles.axes1.XLim = [0, 500];
-handles.axes1.YLim = [0, 300];
+handles.axes1.XLim = [0, 1000];
+handles.axes1.YLim = [0, 500];
 
 
 
@@ -201,8 +199,8 @@ for i = 1 : chineseCount
     [resultImage, resultChar] = Recognition([segPath, num2str(i), '.bmp']);
     resultImage  = logical(resultImage);
     imwrite(resultImage, [resPath, num2str(i), '.bmp']);
-    set(handles.edit4, 'String', [str, resultChar]); 
-    str = get(handles.edit4, 'String'); 
+    set(handles.edit2, 'String', [str, resultChar]); 
+    str = get(handles.edit2, 'String'); 
 end
 set(handles.edit1, 'String', resPath); 
 draw(resPath, chineseCount, handles, 1);
@@ -215,8 +213,8 @@ function pushbutton_fea_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global libPath;
 global feaPath;
-[filename, pathname] = uigetfile({'*.jpg; *.bmp'}, '打开图片', '..\image\lib_img');
-libPath = pathname;
+pathname = uigetdir('..\image\lib_img', '打开文件夹');
+libPath = [pathname, '\'];
 feaPath = Data(libPath);
 set(handles.edit1, 'String', feaPath);
 
@@ -243,7 +241,7 @@ function slider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-val = get(hObject, 'value'); %通锟斤拷et锟斤拷锟斤拷锟斤拷锟斤拷锟侥碉拷前值
+val = get(hObject, 'value'); %获得滑动条当前值
 val = floor(val);
 val = get(hObject, 'Max') - val;
 global chineseCount;
@@ -287,29 +285,6 @@ end
 
 
 
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
 function edit3_Callback(hObject, eventdata, handles)
 % hObject    handle to edit3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -333,18 +308,18 @@ end
 
 
 
-function edit4_Callback(hObject, eventdata, handles)
-% hObject    handle to edit4 (see GCBO)
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit4 as text
-%        str2double(get(hObject,'String')) returns contents of edit4 as a double
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit4_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit4 (see GCBO)
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -355,3 +330,88 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+% --------------------------------------------------------------------
+function fileMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to fileMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function openItem_Callback(hObject, eventdata, handles)
+% hObject    handle to openItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pushbutton_open_Callback(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function recoMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to recoMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function binItem_Callback(hObject, eventdata, handles)
+% hObject    handle to binItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pushbutton_bin_Callback(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function eliItem_Callback(hObject, eventdata, handles)
+% hObject    handle to eliItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pushbutton_elm_Callback(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function segItem_Callback(hObject, eventdata, handles)
+% hObject    handle to segItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pushbutton_seg_Callback(hObject, eventdata, handles)
+
+% --------------------------------------------------------------------
+function regItem_Callback(hObject, eventdata, handles)
+% hObject    handle to regItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pushbutton_reg_Callback(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function exitItem_Callback(hObject, eventdata, handles)
+% hObject    handle to exitItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+close;
+
+% --------------------------------------------------------------------
+function exerMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to exerMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function feaItem_Callback(hObject, eventdata, handles)
+% hObject    handle to feaItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pushbutton_fea_Callback(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function saveItem_Callback(hObject, eventdata, handles)
+% hObject    handle to saveItem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[filename, pathname] = uiputfile('untitled.txt', '保存识别文字结果', '..\data');
+result = get(handles.edit2, 'String');
+savePath = [pathname, filename];
+fp = fopen(savePath, 'w');
+fprintf(fp, result);
+fclose(fp);%关闭文件。
